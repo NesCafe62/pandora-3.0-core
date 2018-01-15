@@ -2,14 +2,16 @@
 	"name": "pandora/core3",
 	"description": "Lightweight PHP framework",
 	"keywords": [
-		"PHP", "lightweight", "framework"
+		"php", "framework"
 	],
 	"homepage": "http://pandora.u-238.ru",
-	"license": "",
+	"license": "GPL-3.0",
 	"authors": [
 		{
-			"name": "NesCafe",
-			"homepage": "http://u-238.ru"
+			"name": "Petr Gostin",
+			"email": "U.238@rambler.ru",
+			"homepage": "http://u-238.ru",
+			"role": "Developer"
 		}
 	],
 	"require": {
@@ -17,9 +19,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"\\pandora\\core3\\": "pandora/core3",
-			"\\pandora\\core3\\libs\\": "pandora/core3.libs",
-			"\\pandora\\core3\\plugins\\": "pandora/core3.plugins"
+			"pandora\\core3\\": "/"
 		}
 	}
 }
