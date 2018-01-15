@@ -14,7 +14,7 @@
 	],
 	"require": {
 		"php": ">=7.1"
-	}
+	},
 	"autoload": {
 		"psr-4": {
 			"\\pandora\\core3\\": "pandora/core3",
