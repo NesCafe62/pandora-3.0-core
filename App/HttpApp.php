@@ -1,10 +1,10 @@
 <?php
 namespace pandora\core3\App;
 
-use pandora\core3\Database\IDatabaseConnection;
-use pandora\core3\Http\IRequest;
-use pandora\core3\Http\IResponse;
+use pandora\core3\Storage\Database\IDatabaseConnection;
+use pandora\core3\Http\{IRequest, IResponse};
 use pandora\core3\Router\IRouter;
+use \Exception;
 
 /**
  * @property IRequest $request
@@ -15,13 +15,30 @@ use pandora\core3\Router\IRouter;
  * @property string $uri
  */
 
-class HttpApp extends BaseApp {
+abstract class HttpApp extends BaseApp {
 
-	public function init() {
+	/**
+	 * Gets the application routes
+	 * @return array
+	 */
+	protected function getRoutes() {
+		try {
+			return include($this->path.'/routes.php');
+		} catch (Exception $e) {
+			// Debug::logException($e);
+			// todo: refactor in accordance with debug api
+			trigger_error('Application routes not loaded', E_USER_ERROR);
+			return [];
+		}
+	}
+
+	protected function init() {
 		$this->di->setDependencies([
 			'response' => ['pandora\core3\libs\Http\Response'],
 			'request' => ['pandora\core3\libs\Http\Request'],
-			'router' => ['pandora\core3\libs\Router\Router'],
+			'router' => function($self) {
+				return new \pandora\core3\libs\Router\Router($self->getRoutes());
+			},
 			'logger' => ['pandora\core3\libs\Logger\Logger']
 		]);
 
@@ -47,7 +64,7 @@ class HttpApp extends BaseApp {
 	protected function test() {
 	}
 
-	public function handle() {
+	protected function handle() {
 		$this->uri = '/'.$this->request->get('ENV_URI_PATH');
 		$this->router->dispatch($this->request, $this->response);
 		$this->test();

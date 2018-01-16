@@ -65,15 +65,19 @@ class DI {
 	}
 
 	/**
-	 * @param string $className
 	 * @param array|Closure $constructionParams
+	 * @param array|null $overrideParams
 	 * @throws Exception
 	 * @return null|object
 	 */
-	private function createInstance(string $className, $constructionParams) {
+	private function createInstance($constructionParams, $overrideParams = null) {
 		if ($constructionParams instanceof Closure) {
-			return $constructionParams($this->containerInstance);
+			$args = $overrideParams ?? [];
+			array_unshift($args, $this->containerInstance);
+			return call_user_func_array($constructionParams, $args);
 		} else {
+			$className = array_shift($constructionParams);
+			$constructionParams = $overrideParams ?? $constructionParams;
 			try {
 				if ($constructionParams) {
 					return call_user_func_array([$className, '__construct'], $constructionParams);
@@ -101,20 +105,23 @@ class DI {
 			throw new Exception('dependency not exist', E_WARNING);
 		}
 		$constructionParams = $this->dependencies[$key];
-		$className = array_shift($constructionParams);
-		$constructionParams = $overrideParams ?? $constructionParams;
 		try {
 			if ($isInstance) {
 				if (!array_key_exists($key, $this->instances)) {
-					$this->instances[$key] = $this->createInstance($className, $constructionParams);
+					$this->instances[$key] = $this->createInstance($constructionParams, $overrideParams);
 				}
 				return $this->instances[$key];
 			} else {
-				return $this->createInstance($className, $constructionParams);
+				return $this->createInstance($constructionParams, $overrideParams);
 			}
-		} catch (Exception $e) {
+		} catch (\Throwable $e) {
 			// todo: refactor in accordance with debug api
-			trigger_error($e->getMessage(), E_USER_WARNING);
+			ob_start();
+			var_dump($constructionParams);
+			$params = '<pre>'.ob_get_clean().'</pre>';
+			trigger_error('DI dependency not created "'.$key.'" '.$e->getMessage(), E_USER_WARNING);
+			trigger_error($params, E_USER_WARNING);
+			// trigger_error($e->getMessage(), E_USER_WARNING);
 			return null;
 		}
 	}

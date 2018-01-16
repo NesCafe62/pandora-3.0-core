@@ -59,14 +59,15 @@ abstract class BaseApp extends DIContainerDynamic {
 		} catch (Exception $e) {
 			// Debug::logException($e);
 			// todo: refactor in accordance with debug api
-			throw new Exception('Unable to load application config', E_ERROR);
+			trigger_error('Application config not loaded', E_USER_ERROR);
+			return [];
 		}
 	}
 
 	/**
 	 * Initialises application parameters
 	 */
-	public function initParams() {
+	protected function initParams() {
 		require(__DIR__.'/../functions.php');
 
 		$this->entryPath = unixPath(getcwd());
@@ -74,7 +75,7 @@ abstract class BaseApp extends DIContainerDynamic {
 		$this->config = $this->getConfig();
 	}
 
-	public abstract function init();
+	protected abstract function init();
 
 	public abstract function run();
 
