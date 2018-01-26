@@ -4,7 +4,12 @@ namespace pandora\core3\Router;
 use pandora\core3\Http\{IRequest, IResponse};
 
 interface IRouter {
-
-	public function dispatch(IRequest $request, IResponse $response);
+	
+	/**
+	 * @param string $uri
+	 * @param IRequest $request
+	 * @param IResponse $response
+	 */
+	public function dispatch(string $uri, IRequest $request, IResponse $response);
 
 }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Converts path slashes to unix format, working on win platform too
+ * Converts path slashes to unix format, working on win platform too.
  * @param string $path
  * @return string
  */
@@ -10,7 +10,7 @@ function unixPath(string $path) {
 }
 
 /**
- * Returns true if $substring is at the beginning of source string
+ * Returns true if $substring is at the beginning of source string.
  * @param string $str
  * @param string $substring
  * @return bool
@@ -20,7 +20,7 @@ function startsWith(string $str, string $substring) {
 }
 
 /**
- * Returns true if $substring is at the end of source string
+ * Returns true if $substring is at the end of source string.
  * @param string $str
  * @param string $substring
  * @return bool
@@ -30,7 +30,7 @@ function endsWith(string $str, string $substring) {
 }
 
 /**
- * Removes substring from the beginning of the source string, if it is found
+ * Removes substring from the beginning of the source string, if it is found.
  * @param string $str
  * @param string $substring
  * @return string
@@ -44,7 +44,7 @@ function trimLeft(string $str, string $substring) {
 }
 
 /**
- * Removes substring from the end of the source string, if it is found
+ * Removes substring from the end of the source string, if it is found.
  * @param string $str
  * @param string $substring
  * @return string

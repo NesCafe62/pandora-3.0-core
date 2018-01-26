@@ -2,12 +2,11 @@
 namespace pandora\core3\DI;
 
 use \Exception;
-use pandora\core3\DI\DI;
 
 class DIContainer {
 
 	/**
-	 * DIContainer constructor
+	 * DIContainer constructor.
 	 */
 	public function __construct() {
 		$this->di = new DI();
@@ -15,7 +14,7 @@ class DIContainer {
 	}
 
 	/**
-	 * Dependency-injection container
+	 * Dependency-injection container.
 	 * @var DI $di
 	 */
 	public $di;
@@ -31,6 +30,21 @@ class DIContainer {
 			// todo: refactor in accordance with debug api
 			trigger_error($e->getMessage(), E_USER_WARNING);
 			return null;
+		}
+	}
+
+	/**
+	 * @param string $param
+	 * @return bool
+	 */
+	public function __isset(string $param) {
+		try {
+			$value = $this->di->get($param);
+			return $value ? true : false;
+		} catch (Exception $e) {
+			// todo: refactor in accordance with debug api
+			trigger_error($e->getMessage(), E_USER_WARNING);
+			return false;
 		}
 	}
 

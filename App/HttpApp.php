@@ -18,7 +18,7 @@ use \Exception;
 abstract class HttpApp extends BaseApp {
 
 	/**
-	 * Gets the application routes
+	 * Gets the application routes.
 	 * @return array
 	 */
 	protected function getRoutes() {
@@ -36,7 +36,7 @@ abstract class HttpApp extends BaseApp {
 		$this->di->setDependencies([
 			'response' => ['pandora\core3\libs\Http\Response'],
 			'request' => ['pandora\core3\libs\Http\Request'],
-			'router' => function($self) {
+			'router' => function($self) { /** @var HttpApp $self */
 				return new \pandora\core3\libs\Router\Router($self->getRoutes());
 			},
 			'logger' => ['pandora\core3\libs\Logger\Logger']
@@ -48,13 +48,13 @@ abstract class HttpApp extends BaseApp {
 	}
 
 	/**
-	 * Application uri
+	 * Application uri.
 	 * @var string $uri
 	 */
 	protected $uri;
 
 	/**
-	 * Application uri getter
+	 * Gets the application uri.
 	 * @return string
 	 */
 	protected function getUri(): string {
@@ -66,7 +66,7 @@ abstract class HttpApp extends BaseApp {
 
 	protected function handle() {
 		$this->uri = '/'.$this->request->get('ENV_URI_PATH');
-		$this->router->dispatch($this->request, $this->response);
+		$this->router->dispatch($this->uri, $this->request, $this->response);
 		$this->test();
 	}
 

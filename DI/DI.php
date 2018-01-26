@@ -1,30 +1,29 @@
 <?php
 namespace pandora\core3\DI;
 
-// use pandora\core3\Debug\BaseException;
-use \Exception;
+use pandora\core3\DI\Exceptions\{DIException, DIKeyNotFoundException};
 use \Closure;
 
 class DI {
 
 	/**
-	 * DI constructor
+	 * DI constructor.
 	 * @param array $dependencies
 	 */
-	public function __construct($dependencies = []) {
+	public function __construct(array $dependencies = []) {
 		if ($dependencies) {
 			$this->setDependencies($dependencies);
 		}
 	}
 
 	/**
-	 * DI container instance
+	 * DI container instance.
 	 * @var object $containerInstance
 	 */
 	private $containerInstance = null;
 
 	/**
-	 * Binds the DI container instance
+	 * Binds the DI container instance.
 	 * @param object $containerInstance
 	 */
 	public function bind($containerInstance) {
@@ -32,13 +31,13 @@ class DI {
 	}
 
 	/**
-	 * Array of dependencies
+	 * Array of dependencies.
 	 * @var array $dependencies
 	 */
 	private $dependencies = [];
 
 	/**
-	 * Array of instances
+	 * Array of instances.
 	 * @var array $instances
 	 */
 	private $instances = [];
@@ -48,9 +47,21 @@ class DI {
 	 * @param array|Closure $constructionParams
 	 */
 	public function set(string $key, $constructionParams) {
+		try {
+			$this->_setDependency($key, $constructionParams);
+		} catch (DIException $e) { }
+	}
+	
+	/**
+	 * @param string $key
+	 * @param array|Closure $constructionParams
+	 * @throws DIException
+	 */
+	private function _setDependency(string $key, $constructionParams) {
 		if (array_key_exists($key, $this->dependencies)) {
 			// todo: refactor in accordance with debug api
-			trigger_error('dependency already set', E_USER_NOTICE);
+			// 'dependency already set'
+			throw new DIException(['DI_DEPENDENCY_KEY_ALREADY_SET', $key]);
 		}
 		$this->dependencies[$key] = $constructionParams;
 	}
@@ -60,14 +71,16 @@ class DI {
 	 */
 	public function setDependencies(array $dependencies) {
 		foreach ($dependencies as $key => $constructionParams) {
-			$this->set($key, $constructionParams);
+			try {
+				$this->_setDependency($key, $constructionParams);
+			} catch (DIException $e) { }
 		}
 	}
 
 	/**
 	 * @param array|Closure $constructionParams
 	 * @param array|null $overrideParams
-	 * @throws Exception
+	 * @throws DIException
 	 * @return null|object
 	 */
 	private function createInstance($constructionParams, $overrideParams = null) {
@@ -84,10 +97,10 @@ class DI {
 				} else {
 					return new $className();
 				}
-			} catch (Exception $e) {
+			} catch (\Throwable $e) {
 				// todo: refactor in accordance with debug api
-				// Debug::logException();
-				throw new Exception('Creating class "'.$className.'" failed', E_WARNING);
+				// 'Creating class "'.$className.'" failed'
+				throw new DIException(['DI_DEPENDENCY_CREATION_FAILED', $className, $constructionParams], E_WARNING, $e);
 			}
 		}
 	}
@@ -96,32 +109,53 @@ class DI {
 	 * @param string $key
 	 * @param bool $isInstance
 	 * @param array|null $overrideParams
-	 * @throws Exception
+	 * @throws DIKeyNotFoundException
+	 * @throws DIException
 	 * @return null|object
 	 */
-	public function _getDependency(string $key, bool $isInstance, $overrideParams = null) {
+	private function _getDependency(string $key, bool $isInstance, $overrideParams = null) {
 		if (!array_key_exists($key, $this->dependencies)) {
 			// todo: refactor in accordance with debug api
-			throw new Exception('dependency not exist', E_WARNING);
+			// 'dependency key not found'
+			throw new DIKeyNotFoundException($key);
 		}
 		$constructionParams = $this->dependencies[$key];
-		try {
-			if ($isInstance) {
-				if (!array_key_exists($key, $this->instances)) {
-					$this->instances[$key] = $this->createInstance($constructionParams, $overrideParams);
-				}
-				return $this->instances[$key];
-			} else {
-				return $this->createInstance($constructionParams, $overrideParams);
+		if ($isInstance) {
+			if (!array_key_exists($key, $this->instances)) {
+				$this->instances[$key] = $this->createInstance($constructionParams, $overrideParams);
 			}
-		} catch (\Throwable $e) {
-			// todo: refactor in accordance with debug api
-			ob_start();
-			var_dump($constructionParams);
-			$params = '<pre>'.ob_get_clean().'</pre>';
-			trigger_error('DI dependency not created "'.$key.'" '.$e->getMessage(), E_USER_WARNING);
-			trigger_error($params, E_USER_WARNING);
+			return $this->instances[$key];
+		} else {
+			return $this->createInstance($constructionParams, $overrideParams);
+		}
+		
+	//	} catch (\Throwable $e) {
+	//		// todo: refactor in accordance with debug api
+		//	ob_start();
+		//	var_dump($constructionParams);
+		//	$params = '<pre>'.ob_get_clean().'</pre>';
+		//	trigger_error('DI dependency not created "'.$key.'" '.$e->getMessage(), E_USER_WARNING);
+		//	trigger_error($params, E_USER_WARNING);
+		
+	//		throw new DIException([], E_WARNING, $e);
+		
 			// trigger_error($e->getMessage(), E_USER_WARNING);
+			
+	//	}
+	}
+
+	/**
+	 * @param string $key
+	 * @param array|null $overrideParams
+	 * @throws DIKeyNotFoundException
+	 * @return null|object
+	 */
+	public function create(string $key, $overrideParams = null) {
+		try {
+			return $this->_getDependency($key, false, $overrideParams);
+		} catch (DIKeyNotFoundException $e) {
+			throw $e;
+		} catch (DIException $e) {
 			return null;
 		}
 	}
@@ -129,21 +163,17 @@ class DI {
 	/**
 	 * @param string $key
 	 * @param array|null $overrideParams
-	 * @throws Exception
-	 * @return null|object
-	 */
-	public function create(string $key, $overrideParams = null) {
-		return $this->_getDependency($key, false, $overrideParams);
-	}
-
-	/**
-	 * @param string $key
-	 * @param array|null $overrideParams
-	 * @throws Exception
+	 * @throws DIKeyNotFoundException
 	 * @return null|object
 	 */
 	public function get(string $key, $overrideParams = null) {
-		return $this->_getDependency($key, true, $overrideParams);
+		try {
+			return $this->_getDependency($key, true, $overrideParams);
+		} catch (DIKeyNotFoundException $e) {
+			throw $e;
+		} catch (DIException $e) {
+			return null;
+		}
 	}
 
 }

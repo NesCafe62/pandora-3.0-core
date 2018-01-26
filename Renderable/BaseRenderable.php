@@ -3,9 +3,20 @@ namespace pandora\core3\Renderable;
 
 class BaseRenderable implements IRenderable {
 
-	protected $viewPath;
-	
-	protected $path;
+	/**
+	 * @return string
+	 */
+	public function getPath() {
+		$class = new \ReflectionClass(get_called_class());
+		return unixPath(dirname($class->getFileName()));
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getViewPath() {
+		return $this->getPath().'/views';
+	}
 
 	public function render($view, $params = []) {
 		// ;

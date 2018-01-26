@@ -7,7 +7,7 @@ use pandora\core3\Dynamic\DIDynamic\DIContainerDynamic;
 abstract class BaseApp extends DIContainerDynamic {
 
 	/**
-	 * Application instance
+	 * Application instance.
 	 * @var BaseApp $appInstance
 	 */
 	private static $appInstance = null;
@@ -20,7 +20,7 @@ abstract class BaseApp extends DIContainerDynamic {
 	}
 
 	/**
-	 * Returns the application instance
+	 * Returns the application instance.
 	 * @return BaseApp
 	 */
 	public static function getInstance() {
@@ -28,19 +28,25 @@ abstract class BaseApp extends DIContainerDynamic {
 	}
 
 	/**
-	 * Configuration settrings
+	 * Configuration settings.
 	 * @var array $config
 	 */
 	public $config;
 
 	/**
-	 * Path to application directory
-	 * @var array $config
+	 * Path to application directory.
+	 * @var string $path
 	 */
 	public $path;
+	
+	/**
+	 * Path to global entry point.
+	 * @var string $entryPath
+	 */
+	public $entryPath;
 
 	/**
-	 * Gets the path of application class
+	 * Gets the path of application class.
 	 * @return string
 	 */
 	public function getPath() {
@@ -49,8 +55,7 @@ abstract class BaseApp extends DIContainerDynamic {
 	}
 
 	/**
-	 * Gets the application configuration
-	 * @throws Exception
+	 * Gets the application configuration.
 	 * @return array
 	 */
 	public function getConfig() {
@@ -65,7 +70,7 @@ abstract class BaseApp extends DIContainerDynamic {
 	}
 
 	/**
-	 * Initialises application parameters
+	 * Initialises application parameters.
 	 */
 	protected function initParams() {
 		require(__DIR__.'/../functions.php');
