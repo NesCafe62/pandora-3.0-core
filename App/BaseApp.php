@@ -86,7 +86,7 @@ abstract class BaseApp extends DIContainerDynamic {
 				$this->_config = require($this->path.'/config.php');
 			} catch (Exception $ex) {
 				// 'Application config not loaded'
-				Debug::logException(new CoreException('HTTP_APP_GET_ROUTES_FILE_NOT_LOADED', E_ERROR, $ex));
+				Debug::logException(new CoreException('APP_GET_CONFIG_FILE_NOT_LOADED', E_ERROR, $ex));
 				$this->_config = [];
 			}
 		}
