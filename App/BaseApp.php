@@ -1,8 +1,18 @@
 <?php
 namespace pandora\core3\App;
 
-use \Exception;
+use pandora\core3\Debug\CoreException;
+use pandora\core3\Debug\Debug;
 use pandora\core3\Dynamic\DIDynamic\DIContainerDynamic;
+use \Exception;
+
+/**
+ * Class BaseApp
+ * @package pandora\core3\App
+ * @property string $entryPath
+ * @property string $path
+ * @property string $config
+ */
 
 abstract class BaseApp extends DIContainerDynamic {
 
@@ -11,7 +21,10 @@ abstract class BaseApp extends DIContainerDynamic {
 	 * @var BaseApp $appInstance
 	 */
 	private static $appInstance = null;
-
+	
+	/**
+	 * BaseApp constructor.
+	 */
 	public function __construct() {
 		parent::__construct();
 		if (self::$appInstance === null) {
@@ -28,45 +41,57 @@ abstract class BaseApp extends DIContainerDynamic {
 	}
 
 	/**
-	 * Configuration settings.
-	 * @var array $config
+	 * @var string $_entryPath
 	 */
-	public $config;
-
-	/**
-	 * Path to application directory.
-	 * @var string $path
-	 */
-	public $path;
+	private $_entryPath;
 	
 	/**
 	 * Path to global entry point.
-	 * @var string $entryPath
+	 * @return string
 	 */
-	public $entryPath;
+	protected function getEntryPath() {
+		return $this->_entryPath;
+	}
+
+	/**
+	 * @var string $_path
+	 */
+	private $_path;
 
 	/**
 	 * Gets the path of application class.
 	 * @return string
 	 */
-	public function getPath() {
-		$appClass = new \ReflectionClass(get_called_class());
-		return unixPath(dirname($appClass->getFileName()));
+	protected function getPath() {
+		if ($this->_path === null) {
+			$appClass = new \ReflectionClass(get_called_class());
+			$this->_path = unixPath(dirname($appClass->getFileName()));
+		}
+		
+		return $this->_path;
 	}
 
 	/**
-	 * Gets the application configuration.
+	 * @var array $_config
+	 */
+	private $_config;
+
+	/**
+	 * Gets application configuration settings.
 	 * @return array
 	 */
-	public function getConfig() {
-		try {
-			return require($this->path.'/config.php');
-		} catch (Exception $e) {
-			// Debug::logException($e);
-			// todo: refactor in accordance with debug api
-			trigger_error('Application config not loaded', E_USER_ERROR);
-			return [];
+	protected function getConfig() {
+		if ($this->_config === null) {
+			try {
+				$this->_config = require($this->path.'/config.php');
+			} catch (Exception $ex) {
+				// 'Application config not loaded'
+				Debug::logException(new CoreException('HTTP_APP_GET_ROUTES_FILE_NOT_LOADED', E_ERROR, $ex));
+				$this->_config = [];
+			}
 		}
+		
+		return $this->_config;
 	}
 
 	/**
@@ -74,10 +99,8 @@ abstract class BaseApp extends DIContainerDynamic {
 	 */
 	protected function initParams() {
 		require(__DIR__.'/../functions.php');
-
-		$this->entryPath = unixPath(getcwd());
-		$this->path = $this->getPath();
-		$this->config = $this->getConfig();
+		
+		$this->_entryPath = unixPath(getcwd());
 	}
 
 	protected abstract function init();

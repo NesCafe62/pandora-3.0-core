@@ -1,6 +1,8 @@
 <?php
 namespace pandora\core3\App;
 
+use pandora\core3\Debug\CoreException;
+use pandora\core3\Debug\Debug;
 use pandora\core3\Storage\Database\IDatabaseConnection;
 use pandora\core3\Http\{IRequest, IResponse};
 use pandora\core3\Router\IRouter;
@@ -24,15 +26,15 @@ abstract class HttpApp extends BaseApp {
 	protected function getRoutes() {
 		try {
 			return include($this->path.'/routes.php');
-		} catch (Exception $e) {
-			// Debug::logException($e);
-			// todo: refactor in accordance with debug api
-			trigger_error('Application routes not loaded', E_USER_ERROR);
+		} catch (Exception $ex) {
+			// 'Application routes not loaded'
+			Debug::logException(new CoreException('HTTP_APP_GET_ROUTES_FILE_NOT_LOADED', E_ERROR, $ex));
 			return [];
 		}
 	}
 
 	protected function init() {
+		// var_dump($this->config);
 		$this->di->setDependencies([
 			'response' => ['pandora\core3\libs\Http\Response'],
 			'request' => ['pandora\core3\libs\Http\Request'],

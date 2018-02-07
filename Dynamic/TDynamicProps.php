@@ -15,4 +15,16 @@ trait TDynamicProps {
 		return parent::__get($param);
 	}
 
+	/**
+	 * @param string $param
+	 * @return bool
+	 */
+	public function __isset(string $param) {
+		$getterMethod = 'get'.ucfirst($param);
+		if (method_exists($this, $getterMethod)) {
+			return true;
+		}
+		return parent::__isset($param);
+	}
+
 }

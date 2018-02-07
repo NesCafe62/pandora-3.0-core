@@ -1,38 +1,92 @@
 <?php
 namespace pandora\core3\Debug;
 
+use pandora\core3\Logger\ILogger;
 use \Throwable;
 
 class Debug {
 
-	public static function logException(Throwable $e) {
-		// $e->getMessage();
-		// $e->getFile();
-		// $e->getLine();
-		// $e->getCode();
-	}
-	
 	/**
-	 * @param string $message
-	 * @param mixed[] ...$params
+	 * @var ILogger $logger
+	 */
+	private static $logger;
+
+	/**
+	 * @param ILogger $logger
+	 */
+	public function init(ILogger $logger) {
+		self::$logger = $logger;
+	}
+
+	/**
+	 * @return ILogger
+	 */
+	public function getLogger() {
+		return self::$logger;
+	}
+
+	/**
+	 * @param Throwable $ex
+	 */
+	public static function logException(Throwable $ex) {
+		$subMessages = [];
+
+		$e = $ex->getPrevious();
+		while ($e != null) {
+			$subMessages[] = [
+				'type' => 'exception',
+				'level' => $e->getCode(),
+				'message' => $e->getMessage(),
+				'params' => ($e instanceof CoreException) ? $e->getParams() : [],
+				'file' => $e->getFile(),
+				'line' => $e->getLine()
+			];
+			$e = $e->getPrevious();
+		}
+
+		self::$logger->log([
+			'type' => 'exception',
+			'level' => $ex->getCode(),
+			'channels' => ['system'],
+			'message' => $ex->getMessage(),
+			'params' => ($ex instanceof CoreException) ? $ex->getParams() : [],
+			'subMessages' => $subMessages,
+			'file' => $ex->getFile(),
+			'line' => $ex->getLine()
+		]);
+	}
+
+	/**
+	 * @param $value
 	 * @return string
 	 */
-	public static function errorMessage(string $message, ...$params) {
-		$messageText = $message;
-		foreach ($params as $param) {
-			// todo: string dump
-			if (is_string($param)) {
-				$paramText = '"'.$param.'"';
-			} else if ($param === null) {
-				$paramText = 'null';
-			} else {
-				ob_start();
-				var_dump($param);
-				$paramText = ob_get_clean();
-			}
-			$messageText .= ' '.$paramText;
+	public static function dumpValue($value) {
+		if (is_string($value)) {
+			$dump = '"'.$value.'"';
+		} else if ($value === null) {
+			$dump = 'null';
+		} else {
+			ob_start();
+			var_dump($value);
+			$dump = ob_get_clean();
 		}
-		return $messageText;
+		return $dump;
+	}
+
+	/**
+	 * @param $value
+	 * @param string $label
+	 */
+	public static function log($value, string $label = '') {
+		$message = self::dumpValue($value);
+		self::$logger->log([
+			'type' => 'exception',
+			'channels' => ['debug'],
+			'message' => $message,
+			'label' => $label,
+			'file' => '',
+			'line' => ''
+		]);
 	}
 
 }
