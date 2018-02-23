@@ -67,7 +67,6 @@ abstract class HttpApp extends BaseApp {
 	}
 
 	protected function handle() {
-		var_dump($this->request);
 		$this->uri = '/'.$this->request->get('ENV_URI_PATH');
 		$this->router->dispatch($this->uri, $this->request, $this->response);
 		$this->test();
