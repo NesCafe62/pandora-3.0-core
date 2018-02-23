@@ -10,7 +10,6 @@ class DIContainer {
 	 */
 	public function __construct() {
 		$this->di = new DI();
-		$this->di->bind($this);
 	}
 
 	/**

@@ -17,20 +17,6 @@ class DI {
 	}
 
 	/**
-	 * DI container instance.
-	 * @var object $containerInstance
-	 */
-	private $containerInstance = null;
-
-	/**
-	 * Binds the DI container instance.
-	 * @param object $containerInstance
-	 */
-	public function bind($containerInstance) {
-		$this->containerInstance = $containerInstance;
-	}
-
-	/**
 	 * Array of dependencies.
 	 * @var array $dependencies
 	 */
@@ -86,7 +72,6 @@ class DI {
 	private function createInstance($constructionParams, $overrideParams = null) {
 		if ($constructionParams instanceof Closure) {
 			$args = $overrideParams ?? [];
-			array_unshift($args, $this->containerInstance);
 			return call_user_func_array($constructionParams, $args);
 		} else {
 			$className = array_shift($constructionParams);
@@ -128,20 +113,6 @@ class DI {
 		} else {
 			return $this->createInstance($constructionParams, $overrideParams);
 		}
-		
-	//	} catch (\Throwable $e) {
-	//		// todo: refactor in accordance with debug api
-		//	ob_start();
-		//	var_dump($constructionParams);
-		//	$params = '<pre>'.ob_get_clean().'</pre>';
-		//	trigger_error('DI dependency not created "'.$key.'" '.$e->getMessage(), E_USER_WARNING);
-		//	trigger_error($params, E_USER_WARNING);
-		
-	//		throw new DIException([], E_WARNING, $e);
-		
-			// trigger_error($e->getMessage(), E_USER_WARNING);
-			
-	//	}
 	}
 
 	/**

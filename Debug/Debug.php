@@ -80,9 +80,10 @@ class Debug {
 	public static function log($value, string $label = '') {
 		$message = self::dumpValue($value);
 		self::$logger->log([
-			'type' => 'exception',
+			'type' => 'log',
 			'channels' => ['debug'],
 			'message' => $message,
+			'value' => $value,
 			'label' => $label,
 			'file' => '',
 			'line' => ''
