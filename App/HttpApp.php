@@ -38,8 +38,8 @@ abstract class HttpApp extends BaseApp {
 		$this->di->setDependencies([
 			'response' => ['pandora\core3\libs\Http\Response'],
 			'request' => ['pandora\core3\libs\Http\Request'],
-			'router' => function($self) { /** @var HttpApp $self */
-				return new \pandora\core3\libs\Router\Router($self->getRoutes());
+			'router' => function() {
+				return new \pandora\core3\libs\Router\Router($this->getRoutes());
 			},
 			'logger' => ['pandora\core3\libs\Logger\Logger']
 		]);
@@ -67,6 +67,7 @@ abstract class HttpApp extends BaseApp {
 	}
 
 	protected function handle() {
+		var_dump($this->request);
 		$this->uri = '/'.$this->request->get('ENV_URI_PATH');
 		$this->router->dispatch($this->uri, $this->request, $this->response);
 		$this->test();
