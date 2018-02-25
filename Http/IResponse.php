@@ -1,5 +1,5 @@
 <?php
-namespace pandora\core3\Http;
+namespace pandora3\core\Http;
 
 interface IResponse {
 

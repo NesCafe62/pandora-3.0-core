@@ -1,20 +1,23 @@
 <?php
-namespace pandora\core3\App;
+namespace pandora3\core\App;
 
-use pandora\core3\Debug\CoreException;
-use pandora\core3\Debug\Debug;
-use pandora\core3\Dynamic\DIDynamic\DIContainerDynamic;
+use pandora3\core\DI\DIContainer;
+use pandora3\core\Dynamic\TDynamicPropsInternal;
+use pandora3\core\Debug\CoreException;
+use pandora3\core\Debug\Debug;
 use \Exception;
 
 /**
  * Class BaseApp
- * @package pandora\core3\App
+ * @package pandora3\core\App
  * @property string $entryPath
  * @property string $path
  * @property string $config
  */
 
-abstract class BaseApp extends DIContainerDynamic {
+abstract class BaseApp extends DIContainer {
+
+	use TDynamicPropsInternal;
 
 	/**
 	 * Application instance.
@@ -23,13 +26,28 @@ abstract class BaseApp extends DIContainerDynamic {
 	private static $appInstance = null;
 	
 	/**
-	 * BaseApp constructor.
+	 * Gets application configuration settings.
+	 * @return array
 	 */
-	public function __construct() {
-		parent::__construct();
-		if (self::$appInstance === null) {
-			self::$appInstance = $this;
-		}
+	protected function getConfig() {
+		return require($this->path.'/config.php');
+	}
+
+	/**
+	 * Gets the path of application class.
+	 * @return string
+	 */
+	protected function getPath() {
+		$class = new \ReflectionClass(get_called_class());
+		return unixPath(dirname($class->getFileName()));
+	}
+
+	/**
+	 * Path to global entry point.
+	 * @return string
+	 */
+	protected function getEntryPath() {
+		return $this->_entryPath;
 	}
 
 	/**
@@ -41,34 +59,13 @@ abstract class BaseApp extends DIContainerDynamic {
 	}
 
 	/**
-	 * @var string $_entryPath
+	 * BaseApp constructor.
 	 */
-	private $_entryPath;
-	
-	/**
-	 * Path to global entry point.
-	 * @return string
-	 */
-	protected function getEntryPath() {
-		return $this->_entryPath;
-	}
-
-	/**
-	 * @var string $_path
-	 */
-	private $_path;
-
-	/**
-	 * Gets the path of application class.
-	 * @return string
-	 */
-	protected function getPath() {
-		if ($this->_path === null) {
-			$appClass = new \ReflectionClass(get_called_class());
-			$this->_path = unixPath(dirname($appClass->getFileName()));
+	public function __construct() {
+		parent::__construct();
+		if (self::$appInstance === null) {
+			self::$appInstance = $this;
 		}
-		
-		return $this->_path;
 	}
 
 	/**
@@ -77,20 +74,38 @@ abstract class BaseApp extends DIContainerDynamic {
 	private $_config;
 
 	/**
-	 * Gets application configuration settings.
+	 * @var string $_path
+	 */
+	private $_path;
+
+	/**
+	 * @var string $_entryPath
+	 */
+	private $_entryPath;
+
+	/**
+	 * @return string
+	 */
+	final protected function _getPath() {
+		if ($this->_path === null) {
+			$this->_path = $this->getPath();
+		}
+		return $this->_path;
+	}
+
+	/**
 	 * @return array
 	 */
-	protected function getConfig() {
+	final protected function _getConfig() {
 		if ($this->_config === null) {
 			try {
-				$this->_config = require($this->path.'/config.php');
+				$this->_config = $this->getConfig();
 			} catch (Exception $ex) {
-				// 'Application config not loaded'
-				Debug::logException(new CoreException('APP_GET_CONFIG_FILE_NOT_LOADED', E_ERROR, $ex));
+				// 'Application get config failed'
+				Debug::logException(new CoreException('APP_GET_CONFIG_FAILED', E_ERROR, $ex));
 				$this->_config = [];
 			}
 		}
-		
 		return $this->_config;
 	}
 

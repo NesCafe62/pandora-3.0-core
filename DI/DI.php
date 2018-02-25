@@ -1,7 +1,7 @@
 <?php
-namespace pandora\core3\DI;
+namespace pandora3\core\DI;
 
-use pandora\core3\DI\Exceptions\{DIException, DIKeyNotFoundException};
+use pandora3\core\DI\Exceptions\{DIException, DIKeyNotFoundException};
 use \Closure;
 
 class DI {

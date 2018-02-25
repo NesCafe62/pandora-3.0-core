@@ -1,5 +1,5 @@
 <?php
-namespace pandora\core3\Renderable;
+namespace pandora3\core\Renderable;
 
 class BaseRenderable implements IRenderable {
 

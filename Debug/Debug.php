@@ -1,7 +1,7 @@
 <?php
-namespace pandora\core3\Debug;
+namespace pandora3\core\Debug;
 
-use pandora\core3\Logger\ILogger;
+use pandora3\core\Logger\ILogger;
 use \Throwable;
 
 class Debug {

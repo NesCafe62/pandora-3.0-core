@@ -1,11 +1,11 @@
 <?php
-namespace pandora\core3\Renderable;
+namespace pandora3\core\Renderable;
 
-use pandora\core3\Dynamic\TDynamicProps;
+use pandora3\core\Dynamic\TDynamicProps;
 
 /**
  * Trait TRenderable
- * @package pandora\core3\Renderable
+ * @package pandora3\core\Renderable
  * @property string $path
  */
 

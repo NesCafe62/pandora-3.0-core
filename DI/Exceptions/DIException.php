@@ -1,7 +1,7 @@
 <?php
-namespace pandora\core3\DI\Exceptions;
+namespace pandora3\core\DI\Exceptions;
 
-use pandora\core3\Debug\CoreException;
+use pandora3\core\Debug\CoreException;
 
 class DIException extends CoreException {
 

@@ -1,5 +1,5 @@
 <?php
-namespace pandora\core3\Plugin;
+namespace pandora3\core\Plugin;
 
 interface IPlugin {
 

@@ -1,7 +1,7 @@
 <?php
 namespace pandora3\core\Dynamic;
 
-trait TDynamicProps {
+trait TDynamicPropsInternal {
 
 	/**
 	 * @param string $param
@@ -9,6 +9,10 @@ trait TDynamicProps {
 	 */
 	public function __get(string $param) {
 		$getter = 'get'.ucfirst($param);
+		$getterInternal = '_'.$getter;
+		if (method_exists($this, $getterInternal)) {
+			return $this->$getterInternal();
+		}
 		if (method_exists($this, $getter)) {
 			return $this->$getter();
 		}
@@ -21,6 +25,10 @@ trait TDynamicProps {
 	 */
 	public function __isset(string $param) {
 		$getter = 'get'.ucfirst($param);
+		$getterInternal = '_'.$getter;
+		if (method_exists($this, $getterInternal)) {
+			return true;
+		}
 		if (method_exists($this, $getter)) {
 			return true;
 		}

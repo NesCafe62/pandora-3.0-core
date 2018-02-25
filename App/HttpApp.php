@@ -1,11 +1,11 @@
 <?php
-namespace pandora\core3\App;
+namespace pandora3\core\App;
 
-use pandora\core3\Debug\CoreException;
-use pandora\core3\Debug\Debug;
-use pandora\core3\Storage\Database\IDatabaseConnection;
-use pandora\core3\Http\{IRequest, IResponse};
-use pandora\core3\Router\IRouter;
+use pandora3\core\Debug\CoreException;
+use pandora3\core\Debug\Debug;
+use pandora3\core\Storage\Database\IDatabaseConnection;
+use pandora3\core\Http\{IRequest, IResponse};
+use pandora3\core\Router\IRouter;
 use \Exception;
 
 /**
@@ -24,28 +24,34 @@ abstract class HttpApp extends BaseApp {
 	 * @return array
 	 */
 	protected function getRoutes() {
+		return include($this->path.'/routes.php');
+	}
+
+	/**
+	 * @return array
+	 */
+	final protected function _getRoutes() {
 		try {
-			return include($this->path.'/routes.php');
+			return $this->getRoutes();
 		} catch (Exception $ex) {
-			// 'Application routes not loaded'
-			Debug::logException(new CoreException('HTTP_APP_GET_ROUTES_FILE_NOT_LOADED', E_ERROR, $ex));
+			// 'Application get routes failed'
+			Debug::logException(new CoreException('HTTP_APP_GET_ROUTES_FAILED', E_ERROR, $ex));
 			return [];
 		}
 	}
 
 	protected function init() {
-		// var_dump($this->config);
 		$this->di->setDependencies([
-			'response' => ['pandora\core3\libs\Http\Response'],
-			'request' => ['pandora\core3\libs\Http\Request'],
+			'response' => ['pandora3\libs\Http\Response'],
+			'request' => ['pandora3\libs\Http\Request'],
 			'router' => function() {
-				return new \pandora\core3\libs\Router\Router($this->getRoutes());
+				return new \pandora3\libs\Router\Router($this->_getRoutes());
 			},
-			'logger' => ['pandora\core3\libs\Logger\Logger']
+			'logger' => ['pandora3\libs\Logger\Logger']
 		]);
 
 		if (!empty($this->config['db'])) {
-			$this->di->set('db', ['pandora\core3\libs\Database\DatabaseConnection', $this->config['db']]);
+			$this->di->set('db', ['pandora3\libs\Database\DatabaseConnection', $this->config['db']]);
 		}
 	}
 
@@ -63,13 +69,13 @@ abstract class HttpApp extends BaseApp {
 		return $this->uri;
 	}
 
-	protected function test() {
+	protected function test() { // temporary
 	}
 
 	protected function handle() {
 		$this->uri = '/'.$this->request->get('ENV_URI_PATH');
 		$this->router->dispatch($this->uri, $this->request, $this->response);
-		$this->test();
+		$this->test(); // temporary
 	}
 
 	public function run() {

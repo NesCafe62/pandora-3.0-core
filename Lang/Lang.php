@@ -1,5 +1,5 @@
 <?php
-namespace pandora\core3\Lang;
+namespace pandora3\core\Lang;
 
 class Lang {
 

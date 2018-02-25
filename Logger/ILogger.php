@@ -1,5 +1,5 @@
 <?php
-namespace pandora\core3\Logger;
+namespace pandora3\core\Logger;
 
 interface ILogger {
 

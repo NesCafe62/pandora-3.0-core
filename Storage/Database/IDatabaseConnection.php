@@ -1,5 +1,5 @@
 <?php
-namespace pandora\core3\Storage\Database;
+namespace pandora3\core\Storage\Database;
 
 interface IDatabaseConnection {
 

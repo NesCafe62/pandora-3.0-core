@@ -1,5 +1,5 @@
 <?php
-namespace pandora\core3\Storage;
+namespace pandora3\core\Storage;
 
 interface IRepository {
 

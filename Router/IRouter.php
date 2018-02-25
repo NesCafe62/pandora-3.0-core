@@ -1,7 +1,7 @@
 <?php
-namespace pandora\core3\Router;
+namespace pandora3\core\Router;
 
-use pandora\core3\Http\{IRequest, IResponse};
+use pandora3\core\Http\{IRequest, IResponse};
 
 interface IRouter {
 	
