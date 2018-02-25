@@ -20,17 +20,17 @@ use \Exception;
 abstract class HttpApp extends BaseApp {
 
 	/**
-	 * Gets the application routes.
+	 * Gets the application routes
 	 * @return array
 	 */
-	protected function getRoutes() {
+	protected function getRoutes(): array {
 		return include($this->path.'/routes.php');
 	}
 
 	/**
 	 * @return array
 	 */
-	final protected function _getRoutes() {
+	final protected function _getRoutes(): array {
 		try {
 			return $this->getRoutes();
 		} catch (Exception $ex) {
@@ -40,7 +40,7 @@ abstract class HttpApp extends BaseApp {
 		}
 	}
 
-	protected function init() {
+	protected function init(): void {
 		$this->di->setDependencies([
 			'response' => ['pandora3\libs\Http\Response'],
 			'request' => ['pandora3\libs\Http\Request'],
@@ -62,7 +62,7 @@ abstract class HttpApp extends BaseApp {
 	protected $uri;
 
 	/**
-	 * Gets the application uri.
+	 * Gets the application uri
 	 * @return string
 	 */
 	protected function getUri(): string {
@@ -72,13 +72,13 @@ abstract class HttpApp extends BaseApp {
 	protected function test() { // temporary
 	}
 
-	protected function handle() {
+	protected function handle(): void {
 		$this->uri = '/'.$this->request->get('ENV_URI_PATH');
 		$this->router->dispatch($this->uri, $this->request, $this->response);
 		$this->test(); // temporary
 	}
 
-	public function run() {
+	public function run(): void {
 		$this->initParams();
 		$this->init();
 		$this->handle();

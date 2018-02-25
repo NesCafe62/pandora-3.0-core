@@ -11,7 +11,7 @@ class Logger implements ILogger {
 	/**
 	 * @param array $message
 	 */
-	public function log(array $message) {
+	public function log(array $message): void {
 		$this->messages[] = $message;
 	}
 

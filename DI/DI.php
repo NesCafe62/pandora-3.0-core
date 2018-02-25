@@ -32,7 +32,7 @@ class DI {
 	 * @param string $key
 	 * @param array|Closure $constructionParams
 	 */
-	public function set(string $key, $constructionParams) {
+	public function set(string $key, $constructionParams): void {
 		try {
 			$this->_setDependency($key, $constructionParams);
 		} catch (DIException $e) { }
@@ -43,7 +43,7 @@ class DI {
 	 * @param array|Closure $constructionParams
 	 * @throws DIException
 	 */
-	private function _setDependency(string $key, $constructionParams) {
+	private function _setDependency(string $key, $constructionParams): void {
 		if (array_key_exists($key, $this->dependencies)) {
 			// todo: refactor in accordance with debug api
 			// 'dependency already set'
@@ -55,7 +55,7 @@ class DI {
 	/**
 	 * @param array $dependencies
 	 */
-	public function setDependencies(array $dependencies) {
+	public function setDependencies(array $dependencies): void {
 		foreach ($dependencies as $key => $constructionParams) {
 			try {
 				$this->_setDependency($key, $constructionParams);

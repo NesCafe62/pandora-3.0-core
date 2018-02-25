@@ -6,7 +6,7 @@ use Exception;
 class DIKeyNotFoundException extends DIException {
 	
 	/**
-	 * DIKeyNotFoundException constructor.
+	 * DIKeyNotFoundException constructor
 	 * @param string $key
 	 * @param int $code
 	 * @param Exception|null $previous

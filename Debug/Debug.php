@@ -21,7 +21,7 @@ class Debug {
 	/**
 	 * @return ILogger
 	 */
-	public function getLogger() {
+	public function getLogger(): ILogger {
 		return self::$logger;
 	}
 
@@ -60,7 +60,7 @@ class Debug {
 	 * @param $value
 	 * @return string
 	 */
-	public static function dumpValue($value) {
+	public static function dumpValue($value): string {
 		if (is_string($value)) {
 			$dump = '"'.$value.'"';
 		} else if ($value === null) {
@@ -77,7 +77,7 @@ class Debug {
 	 * @param $value
 	 * @param string $label
 	 */
-	public static function log($value, string $label = '') {
+	public static function log($value, string $label = ''): void {
 		$message = self::dumpValue($value);
 		self::$logger->log([
 			'type' => 'log',

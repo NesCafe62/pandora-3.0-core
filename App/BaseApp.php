@@ -8,7 +8,6 @@ use pandora3\core\Debug\Debug;
 use \Exception;
 
 /**
- * Class BaseApp
  * @package pandora3\core\App
  * @property string $entryPath
  * @property string $path
@@ -20,46 +19,46 @@ abstract class BaseApp extends DIContainer {
 	use TDynamicPropsInternal;
 
 	/**
-	 * Application instance.
+	 * Application instance
 	 * @var BaseApp $appInstance
 	 */
 	private static $appInstance = null;
 	
 	/**
-	 * Gets application configuration settings.
+	 * Gets application configuration settings
 	 * @return array
 	 */
-	protected function getConfig() {
+	protected function getConfig(): array {
 		return require($this->path.'/config.php');
 	}
 
 	/**
-	 * Gets the path of application class.
+	 * Gets the path of application class
 	 * @return string
 	 */
-	protected function getPath() {
+	protected function getPath(): string {
 		$class = new \ReflectionClass(get_called_class());
 		return unixPath(dirname($class->getFileName()));
 	}
 
 	/**
-	 * Path to global entry point.
+	 * Path to global entry point
 	 * @return string
 	 */
-	protected function getEntryPath() {
+	protected function getEntryPath(): string {
 		return $this->_entryPath;
 	}
 
 	/**
-	 * Returns the application instance.
+	 * Returns the application instance
 	 * @return BaseApp
 	 */
-	public static function getInstance() {
+	public static function getInstance(): BaseApp {
 		return self::$appInstance;
 	}
 
 	/**
-	 * BaseApp constructor.
+	 * BaseApp constructor
 	 */
 	public function __construct() {
 		parent::__construct();
@@ -86,7 +85,7 @@ abstract class BaseApp extends DIContainer {
 	/**
 	 * @return string
 	 */
-	final protected function _getPath() {
+	final protected function _getPath(): string {
 		if ($this->_path === null) {
 			$this->_path = $this->getPath();
 		}
@@ -96,7 +95,7 @@ abstract class BaseApp extends DIContainer {
 	/**
 	 * @return array
 	 */
-	final protected function _getConfig() {
+	final protected function _getConfig(): array {
 		if ($this->_config === null) {
 			try {
 				$this->_config = $this->getConfig();
@@ -110,16 +109,16 @@ abstract class BaseApp extends DIContainer {
 	}
 
 	/**
-	 * Initialises application parameters.
+	 * Initialises application parameters
 	 */
-	protected function initParams() {
+	protected function initParams(): void {
 		require(__DIR__.'/../functions.php');
 		
 		$this->_entryPath = unixPath(getcwd());
 	}
 
-	protected abstract function init();
+	protected abstract function init(): void;
 
-	public abstract function run();
+	public abstract function run(): void;
 
 }

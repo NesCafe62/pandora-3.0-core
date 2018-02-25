@@ -5,13 +5,13 @@ interface IRequest {
 
 	/**
 	 * @param string $param
-	 * @return string|null
+	 * @return string|array|null
 	 */
 	public function get(string $param);
 
 	/**
 	 * @param string $param
-	 * @return string|null
+	 * @return string|array|null
 	 */
 	public function post(string $param);
 

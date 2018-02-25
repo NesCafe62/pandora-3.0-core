@@ -5,7 +5,7 @@ trait TDynamicPropsInternal {
 
 	/**
 	 * @param string $param
-	 * @return mixed
+	 * @return null|object
 	 */
 	public function __get(string $param) {
 		$getter = 'get'.ucfirst($param);
@@ -23,7 +23,7 @@ trait TDynamicPropsInternal {
 	 * @param string $param
 	 * @return bool
 	 */
-	public function __isset(string $param) {
+	public function __isset(string $param): bool {
 		$getter = 'get'.ucfirst($param);
 		$getterInternal = '_'.$getter;
 		if (method_exists($this, $getterInternal)) {

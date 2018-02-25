@@ -6,6 +6,6 @@ interface ILogger {
 	/**
 	 * @param array $message
 	 */
-	function log(array $message);
+	function log(array $message): void;
 
 }

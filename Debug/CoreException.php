@@ -11,7 +11,7 @@ class CoreException extends Exception {
 	private $params;
 
 	/**
-	 * CoreException constructor.
+	 * CoreException constructor
 	 * @param array|string $params
 	 * @param int $code
 	 * @param Exception|null $previous
@@ -19,6 +19,7 @@ class CoreException extends Exception {
 	public function __construct($params, $code = E_WARNING, ?Exception $previous = null) {
 		if (is_string($params)) {
 			$message = $params;
+			$params = [];
 		} else {
 			// $message = $params[0] ?? '';
 			$message = call_user_func_array([__CLASS__, 'errorMessage'], $params);
@@ -34,7 +35,7 @@ class CoreException extends Exception {
 	 * @param mixed[] ...$params
 	 * @return string
 	 */
-	private static function errorMessage(string $message, ...$params) { // temporary
+	private static function errorMessage(string $message, ...$params): string { // temporary
 		$messageText = $message;
 		foreach ($params as $param) {
 			// todo_: string dump
@@ -43,7 +44,10 @@ class CoreException extends Exception {
 		return $messageText;
 	}
 
-	public function getParams() {
+	/**
+	 * @return array
+	 */
+	public function getParams(): array {
 		return $this->params;
 	}
 

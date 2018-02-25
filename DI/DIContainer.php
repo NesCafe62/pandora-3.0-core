@@ -2,18 +2,19 @@
 namespace pandora3\core\DI;
 
 use \Exception;
+use pandora3\core\Debug\Debug;
 
 class DIContainer {
 
 	/**
-	 * DIContainer constructor.
+	 * DIContainer constructor
 	 */
 	public function __construct() {
 		$this->di = new DI();
 	}
 
 	/**
-	 * Dependency-injection container.
+	 * Dependency-injection container
 	 * @var DI $di
 	 */
 	public $di;
@@ -25,9 +26,8 @@ class DIContainer {
 	public function __get(string $param) {
 		try {
 			return $this->di->get($param);
-		} catch (Exception $e) {
-			// todo: refactor in accordance with debug api
-			trigger_error($e->getMessage(), E_USER_WARNING);
+		} catch (Exception $ex) {
+			Debug::logException($ex);
 			return null;
 		}
 	}
@@ -36,13 +36,12 @@ class DIContainer {
 	 * @param string $param
 	 * @return bool
 	 */
-	public function __isset(string $param) {
+	public function __isset(string $param): bool {
 		try {
 			$value = $this->di->get($param);
 			return $value ? true : false;
-		} catch (Exception $e) {
-			// todo: refactor in accordance with debug api
-			trigger_error($e->getMessage(), E_USER_WARNING);
+		} catch (Exception $ex) {
+			Debug::logException($ex);
 			return false;
 		}
 	}
