@@ -3,12 +3,11 @@ namespace pandora3\core\App;
 
 use pandora3\core\DI\DIContainer;
 use pandora3\core\Dynamic\TDynamicPropsInternal;
-use pandora3\core\Debug\CoreException;
-use pandora3\core\Debug\Debug;
+use pandora3\core\Debug\{Debug, CoreException};
+use pandora3\core\Logger\Logger;
 use \Exception;
 
 /**
- * @package pandora3\core\App
  * @property string $entryPath
  * @property string $path
  * @property string $config
@@ -42,14 +41,6 @@ abstract class BaseApp extends DIContainer {
 	}
 
 	/**
-	 * Path to global entry point
-	 * @return string
-	 */
-	protected function getEntryPath(): string {
-		return $this->_entryPath;
-	}
-
-	/**
 	 * Returns the application instance
 	 * @return BaseApp
 	 */
@@ -78,11 +69,6 @@ abstract class BaseApp extends DIContainer {
 	private $_path;
 
 	/**
-	 * @var string $_entryPath
-	 */
-	private $_entryPath;
-
-	/**
 	 * @return string
 	 */
 	final protected function _getPath(): string {
@@ -109,12 +95,62 @@ abstract class BaseApp extends DIContainer {
 	}
 
 	/**
+	 * @var array $namespaces
+	 */
+	private static $namespaces = [];
+
+	/**
+	 * @param string $namespace
+	 * @param string $path
+	 */
+	public function addNamespace(string $namespace, string $path): void {
+		self::$namespaces[trimLeft(str_replace('\\', '/', $namespace), '/')] = $path;
+	}
+
+	/**
+	 * @param string $className
+	 * @return string
+	 */
+	private function getAutoloadFilename(string $className): string {
+		$className = str_replace('\\', '/', $className);
+		foreach (self::$namespaces as $namespace => $path) {
+			if (startsWith($className.'/', $namespace.'/')) {
+				$className = $path.'/' . trimLeft($className, $namespace.'/');
+				break;
+			}
+		}
+		return $className . '.php';
+	}
+
+	/**
+	 * @param string $className
+	 */
+	public function autoload($className) {
+		$filename = self::getAutoloadFilename($className);
+		if (!is_file($filename)) {
+			return;
+		}
+
+		include $filename;
+		if (!class_exists($className, false) && !interface_exists($className, false) && !trait_exists($className, false)) {
+			Debug::logException(new CoreException(['AUTOLOAD_CLASS_NOT_FOUND', $className, $filename], E_ERROR));
+		}
+	}
+
+	/**
 	 * Initialises application parameters
 	 */
 	protected function initParams(): void {
-		require(__DIR__.'/../functions.php');
-		
-		$this->_entryPath = unixPath(getcwd());
+		require(dirname(__DIR__).'/functions.php');
+
+		Debug::init(new Logger());
+
+		$namespace = $this->config['namespace'] ?? '\\app';
+		if ($namespace) {
+			$this->addNamespace($namespace, $this->path);
+		}
+
+		spl_autoload_register([$this, 'autoload']);
 	}
 
 	protected abstract function init(): void;

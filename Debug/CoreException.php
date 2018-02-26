@@ -2,6 +2,7 @@
 namespace pandora3\core\Debug;
 
 use \Exception;
+use \Throwable;
 
 class CoreException extends Exception {
 
@@ -14,9 +15,9 @@ class CoreException extends Exception {
 	 * CoreException constructor
 	 * @param array|string $params
 	 * @param int $code
-	 * @param Exception|null $previous
+	 * @param Throwable|null $previous
 	 */
-	public function __construct($params, $code = E_WARNING, ?Exception $previous = null) {
+	public function __construct($params, $code = E_WARNING, ?Throwable $previous = null) {
 		if (is_string($params)) {
 			$message = $params;
 			$params = [];

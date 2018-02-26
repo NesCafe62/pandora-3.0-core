@@ -45,7 +45,6 @@ class DI {
 	 */
 	private function _setDependency(string $key, $constructionParams): void {
 		if (array_key_exists($key, $this->dependencies)) {
-			// todo: refactor in accordance with debug api
 			// 'dependency already set'
 			throw new DIException(['DI_DEPENDENCY_KEY_ALREADY_SET', $key]);
 		}
@@ -83,7 +82,6 @@ class DI {
 					return new $className();
 				}
 			} catch (\Throwable $e) {
-				// todo: refactor in accordance with debug api
 				// 'Creating class "'.$className.'" failed'
 				throw new DIException(['DI_DEPENDENCY_CREATION_FAILED', $className, $constructionParams], E_WARNING, $e);
 			}
@@ -100,7 +98,6 @@ class DI {
 	 */
 	private function _getDependency(string $key, bool $isInstance, $overrideParams = null) {
 		if (!array_key_exists($key, $this->dependencies)) {
-			// todo: refactor in accordance with debug api
 			// 'dependency key not found'
 			throw new DIKeyNotFoundException($key);
 		}

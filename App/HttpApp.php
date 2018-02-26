@@ -46,8 +46,7 @@ abstract class HttpApp extends BaseApp {
 			'request' => ['pandora3\libs\Http\Request'],
 			'router' => function() {
 				return new \pandora3\libs\Router\Router($this->_getRoutes());
-			},
-			'logger' => ['pandora3\libs\Logger\Logger']
+			}
 		]);
 
 		if (!empty($this->config['db'])) {

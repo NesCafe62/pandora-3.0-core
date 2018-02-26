@@ -1,7 +1,7 @@
 <?php
 namespace pandora3\core\Debug;
 
-use pandora3\core\Logger\ILogger;
+use pandora3\core\Logger\{Logger, ILogger};
 use \Throwable;
 
 class Debug {
@@ -12,17 +12,42 @@ class Debug {
 	private static $logger;
 
 	/**
-	 * @param ILogger $logger
+	 * @param ILogger|null $logger
 	 */
-	public function init(ILogger $logger) {
-		self::$logger = $logger;
+	public static function init($logger = null) {
+		self::$logger = $logger ?? new Logger();
 	}
 
 	/**
 	 * @return ILogger
 	 */
-	public function getLogger(): ILogger {
+	public static function getLogger(): ILogger {
 		return self::$logger;
+	}
+
+	/**
+	 * @param int $code
+	 * @return string
+	 */
+	public static function getErrorLabel(int $code) {
+		$codes = [
+			E_ERROR => 'Error',
+			E_WARNING => 'Warning',
+			E_PARSE => 'Parse error',
+			E_NOTICE => 'Notice',
+			E_CORE_ERROR => 'Error',
+			E_CORE_WARNING => 'Warning',
+			E_USER_ERROR => 'Error',
+			E_COMPILE_ERROR => 'Error',
+			E_COMPILE_WARNING => 'Warning',
+			E_USER_WARNING => 'Warning',
+			E_USER_NOTICE => 'Notice',
+			E_STRICT => 'Strict',
+			E_RECOVERABLE_ERROR => 'Error',
+			E_DEPRECATED => 'Deprecated',
+			E_USER_DEPRECATED => 'Deprecated'
+		];
+		return $codes[$code] ?? 'Error';
 	}
 
 	/**
@@ -43,6 +68,8 @@ class Debug {
 			];
 			$e = $e->getPrevious();
 		}
+
+		echo '<b>'.self::getErrorLabel($ex->getCode()).'</b>: '.$ex->getMessage().' in <b>'.$ex->getFile().'</b> on line <b>'.$ex->getLine().'</b><br>';
 
 		self::$logger->log([
 			'type' => 'exception',
