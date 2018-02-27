@@ -14,6 +14,7 @@ use \Exception;
  * @property IRouter $router
  * @property IDatabaseConnection $db
  *
+ * @property array $routes
  * @property string $uri
  */
 
@@ -45,7 +46,7 @@ abstract class HttpApp extends BaseApp {
 			'response' => ['pandora3\libs\Http\Response'],
 			'request' => ['pandora3\libs\Http\Request'],
 			'router' => function() {
-				return new \pandora3\libs\Router\Router($this->_getRoutes());
+				return new \pandora3\libs\Router\Router($this->routes);
 			}
 		]);
 

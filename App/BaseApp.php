@@ -22,6 +22,26 @@ abstract class BaseApp extends DIContainer {
 	 * @var BaseApp $appInstance
 	 */
 	private static $appInstance = null;
+
+	/**
+	 * @var array $namespaces
+	 */
+	private $namespaces = [];
+
+	/**
+	 * @var array $aliases
+	 */
+	private $aliases = [];
+
+	/**
+	 * @var array $_config
+	 */
+	private $_config;
+
+	/**
+	 * @var string $_path
+	 */
+	private $_path;
 	
 	/**
 	 * Gets application configuration settings
@@ -59,16 +79,6 @@ abstract class BaseApp extends DIContainer {
 	}
 
 	/**
-	 * @var array $_config
-	 */
-	private $_config;
-
-	/**
-	 * @var string $_path
-	 */
-	private $_path;
-
-	/**
 	 * @return string
 	 */
 	final protected function _getPath(): string {
@@ -95,16 +105,56 @@ abstract class BaseApp extends DIContainer {
 	}
 
 	/**
-	 * @var array $namespaces
+	 * @param string $alias
+	 * @param string $path
+	 * @return bool
 	 */
-	private static $namespaces = [];
+	public function setAlias(string $alias, string $path): bool {
+		try {
+			$this->aliases[$alias] = $this->getAliasPath($path);
+			return true;
+		} catch (Exception $ex) {
+			Debug::logException($ex);
+		}
+		return false;
+	}
+
+	/**
+	 * Replaces the alias in path
+	 * @param string $path
+	 * @return string
+	 * @throws CoreException
+	 */
+	public function getAliasPath(string $path): string {
+		if (startsWith($path, '@')) {
+			foreach ($this->aliases as $alias => $aliasPath) {
+				if (startsWith($path.'/', $alias.'/')) {
+					return $aliasPath . trimLeft($path, $alias);
+				}
+			}
+			throw new CoreException(['APP_ALIAS_PATH_UNKNOWN', $path], E_WARNING);
+		}
+		return $path;
+	}
 
 	/**
 	 * @param string $namespace
 	 * @param string $path
+	 * @return bool
 	 */
-	public function addNamespace(string $namespace, string $path): void {
-		self::$namespaces[trimLeft(str_replace('\\', '/', $namespace), '/')] = $path;
+	public function addNamespace(string $namespace, string $path): bool {
+		if (!$namespace) {
+			Debug::logException(new CoreException(['APP_ADD_NAMESPACE_IS_EMPTY', $path], E_WARNING));
+			return false;
+		}
+
+		try {
+			$this->namespaces[trimLeft(str_replace('\\', '/', $namespace), '/')] = $this->getAliasPath($path);
+			return true;
+		} catch (Exception $ex) {
+			Debug::logException($ex);
+		}
+		return false;
 	}
 
 	/**
@@ -113,7 +163,7 @@ abstract class BaseApp extends DIContainer {
 	 */
 	private function getAutoloadFilename(string $className): string {
 		$className = str_replace('\\', '/', $className);
-		foreach (self::$namespaces as $namespace => $path) {
+		foreach ($this->namespaces as $namespace => $path) {
 			if (startsWith($className.'/', $namespace.'/')) {
 				$className = $path.'/' . trimLeft($className, $namespace.'/');
 				break;
@@ -132,6 +182,7 @@ abstract class BaseApp extends DIContainer {
 		}
 
 		include $filename;
+
 		if (!class_exists($className, false) && !interface_exists($className, false) && !trait_exists($className, false)) {
 			Debug::logException(new CoreException(['AUTOLOAD_CLASS_NOT_FOUND', $className, $filename], E_ERROR));
 		}
@@ -145,10 +196,12 @@ abstract class BaseApp extends DIContainer {
 
 		Debug::init(new Logger());
 
-		$namespace = $this->config['namespace'] ?? '\\app';
-		if ($namespace) {
-			$this->addNamespace($namespace, $this->path);
-		}
+		$this->setAlias('@app', $this->path);
+		$this->setAlias('@plugins', '@app/plugins');
+		$this->addNamespace($this->config['namespace'] ?? '\\app', '@app');
+
+		// $this->addNamespace('\\app\\models', '@app/models');
+		// $this->addNamespace('\\app\\plugins', '@app/plugins');
 
 		spl_autoload_register([$this, 'autoload']);
 	}

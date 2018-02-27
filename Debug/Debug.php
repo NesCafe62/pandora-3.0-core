@@ -106,6 +106,9 @@ class Debug {
 	 */
 	public static function log($value, string $label = ''): void {
 		$message = self::dumpValue($value);
+
+		echo '<b>Console</b>: '.$label.' '.$message.'<br>';
+
 		self::$logger->log([
 			'type' => 'log',
 			'channels' => ['debug'],

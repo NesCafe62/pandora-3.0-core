@@ -35,8 +35,8 @@ trait TRenderable {
 		return $this->path.'/views';
 	}
 
-	public function render($view, $params = []) {
-		// ;
+	public function render(string $view, $params = []): string {
+		return '';
 	}
 
 }

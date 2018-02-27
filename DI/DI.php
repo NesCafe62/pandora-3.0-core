@@ -35,7 +35,7 @@ class DI {
 	public function set(string $key, $constructionParams): void {
 		try {
 			$this->_setDependency($key, $constructionParams);
-		} catch (DIException $e) { }
+		} catch (DIException $ex) { }
 	}
 	
 	/**
@@ -58,7 +58,7 @@ class DI {
 		foreach ($dependencies as $key => $constructionParams) {
 			try {
 				$this->_setDependency($key, $constructionParams);
-			} catch (DIException $e) { }
+			} catch (DIException $ex) { }
 		}
 	}
 
@@ -81,9 +81,9 @@ class DI {
 				} else {
 					return new $className();
 				}
-			} catch (\Throwable $e) {
+			} catch (\Throwable $ex) {
 				// 'Creating class "'.$className.'" failed'
-				throw new DIException(['DI_DEPENDENCY_CREATION_FAILED', $className, $constructionParams], E_WARNING, $e);
+				throw new DIException(['DI_DEPENDENCY_CREATION_FAILED', $className, $constructionParams], E_WARNING, $ex);
 			}
 		}
 	}
@@ -121,9 +121,9 @@ class DI {
 	public function create(string $key, $overrideParams = null) {
 		try {
 			return $this->_getDependency($key, false, $overrideParams);
-		} catch (DIKeyNotFoundException $e) {
-			throw $e;
-		} catch (DIException $e) {
+		} catch (DIKeyNotFoundException $ex) {
+			throw $ex;
+		} catch (DIException $ex) {
 			return null;
 		}
 	}
@@ -137,9 +137,9 @@ class DI {
 	public function get(string $key, $overrideParams = null) {
 		try {
 			return $this->_getDependency($key, true, $overrideParams);
-		} catch (DIKeyNotFoundException $e) {
-			throw $e;
-		} catch (DIException $e) {
+		} catch (DIKeyNotFoundException $ex) {
+			throw $ex;
+		} catch (DIException $ex) {
 			return null;
 		}
 	}
