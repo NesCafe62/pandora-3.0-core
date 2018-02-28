@@ -79,10 +79,14 @@ abstract class HttpApp extends BaseApp {
 	}
 
 	public function run(): void {
-		$this->initParams();
-		$this->init();
-		$this->handle();
-		$this->response->send();
+		try {
+			$this->initParams();
+			$this->init();
+			$this->handle();
+			$this->response->send();
+		} catch (\Throwable $ex) {
+			Debug::logException($ex);
+		}
 	}
 
 }

@@ -69,7 +69,7 @@ class Debug {
 			$e = $e->getPrevious();
 		}
 
-		echo '<b>'.self::getErrorLabel($ex->getCode()).'</b>: '.$ex->getMessage().' in <b>'.$ex->getFile().'</b> on line <b>'.$ex->getLine().'</b><br>';
+		echo '<b>'.self::getErrorLabel($ex->getCode()).'</b>: <pre style="display: inline;">'.str_replace('  ', '    ', $ex->getMessage()).'</pre> in <b>'.$ex->getFile().'</b> on line <b>'.$ex->getLine().'</b><br>';
 
 		self::$logger->log([
 			'type' => 'exception',
