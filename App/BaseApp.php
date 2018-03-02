@@ -56,7 +56,7 @@ abstract class BaseApp extends DIContainer {
 	 * @return string
 	 */
 	protected function getPath(): string {
-		$class = new \ReflectionClass(get_called_class());
+		$class = new \ReflectionClass(static::class);
 		return unixPath(dirname($class->getFileName()));
 	}
 
@@ -175,7 +175,7 @@ abstract class BaseApp extends DIContainer {
 	/**
 	 * @param string $className
 	 */
-	public function autoload($className) {
+	public function autoload($className): void {
 		$filename = self::getAutoloadFilename($className);
 		if (!is_file($filename)) {
 			return;

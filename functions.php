@@ -5,7 +5,7 @@
  * @param string $path
  * @return string
  */
-function unixPath(string $path) {
+function unixPath(string $path): string {
 	return str_replace('\\', '/', $path);
 }
 
@@ -15,7 +15,7 @@ function unixPath(string $path) {
  * @param string $substring
  * @return bool
  */
-function startsWith(string $str, string $substring) {
+function startsWith(string $str, string $substring): bool {
 	return (strpos($str, $substring) === 0);
 }
 
@@ -25,7 +25,7 @@ function startsWith(string $str, string $substring) {
  * @param string $substring
  * @return bool
  */
-function endsWith(string $str, string $substring) {
+function endsWith(string $str, string $substring): bool {
 	return (strrpos($str, $substring) === strlen($str) - strlen($substring));
 }
 
@@ -35,7 +35,7 @@ function endsWith(string $str, string $substring) {
  * @param string $substring
  * @return string
  */
-function trimLeft(string $str, string $substring) {
+function trimLeft(string $str, string $substring): string {
 	if ($substring !== '') {
 		if (startsWith($str, $substring)) $str = substr($str, strlen($substring));
 		if ($str === false) $str = '';
@@ -49,7 +49,7 @@ function trimLeft(string $str, string $substring) {
  * @param string $substring
  * @return string
  */
-function trimRight(string $str, string $substring) {
+function trimRight(string $str, string $substring): string {
 	if ($substring !== '') {
 		if (endsWith($str, $substring)) $str = substr($str, 0, strlen($str) - strlen($substring));
 		if ($str === false) $str = '';

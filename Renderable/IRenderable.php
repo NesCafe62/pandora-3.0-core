@@ -13,6 +13,6 @@ interface IRenderable {
 	 * @param array $params
 	 * @return string
 	 */
-	public function render($view, $params = []): string;
+	public function render(string $view, array $params = []): string;
 
 }

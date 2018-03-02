@@ -1,18 +1,15 @@
 <?php
 namespace pandora3\core\App;
 
-use pandora3\core\Debug\CoreException;
-use pandora3\core\Debug\Debug;
-use pandora3\core\Storage\Database\IDatabaseConnection;
-use pandora3\core\Http\{IRequest, IResponse};
-use pandora3\core\Router\IRouter;
+use pandora3\core\Debug\{Debug, CoreException};
 use \Exception;
+use \Throwable;
 
 /**
- * @property IRequest $request
- * @property IResponse $response
- * @property IRouter $router
- * @property IDatabaseConnection $db
+ * @property \pandora3\core\Http\IRequest $request
+ * @property \pandora3\core\Http\IResponse $response
+ * @property \pandora3\core\Router\IRouter $router
+ * @property \pandora3\core\Storage\Database\IDatabaseConnection $db
  *
  * @property array $routes
  * @property string $uri
@@ -69,13 +66,9 @@ abstract class HttpApp extends BaseApp {
 		return $this->uri;
 	}
 
-	protected function test() { // temporary
-	}
-
 	protected function handle(): void {
 		$this->uri = '/'.$this->request->get('ENV_URI_PATH');
 		$this->router->dispatch($this->uri, $this->request, $this->response);
-		$this->test(); // temporary
 	}
 
 	public function run(): void {
@@ -84,7 +77,7 @@ abstract class HttpApp extends BaseApp {
 			$this->init();
 			$this->handle();
 			$this->response->send();
-		} catch (\Throwable $ex) {
+		} catch (Throwable $ex) {
 			Debug::logException($ex);
 		}
 	}

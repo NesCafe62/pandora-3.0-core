@@ -14,7 +14,7 @@ class Debug {
 	/**
 	 * @param ILogger|null $logger
 	 */
-	public static function init($logger = null) {
+	public static function init($logger = null): void {
 		self::$logger = $logger ?? new Logger();
 	}
 
@@ -29,7 +29,7 @@ class Debug {
 	 * @param int $code
 	 * @return string
 	 */
-	public static function getErrorLabel(int $code) {
+	public static function getErrorLabel(int $code): string {
 		$codes = [
 			E_ERROR => 'Error',
 			E_WARNING => 'Warning',
@@ -53,7 +53,7 @@ class Debug {
 	/**
 	 * @param Throwable $ex
 	 */
-	public static function logException(Throwable $ex) {
+	public static function logException(Throwable $ex): void {
 		$subMessages = [];
 
 		$e = $ex->getPrevious();

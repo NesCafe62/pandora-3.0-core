@@ -3,6 +3,7 @@ namespace pandora3\core\DI;
 
 use pandora3\core\DI\Exceptions\{DIException, DIKeyNotFoundException};
 use \Closure;
+use \Throwable;
 
 class DI {
 
@@ -81,7 +82,7 @@ class DI {
 				} else {
 					return new $className();
 				}
-			} catch (\Throwable $ex) {
+			} catch (Throwable $ex) {
 				// 'Creating class "'.$className.'" failed'
 				throw new DIException(['DI_DEPENDENCY_CREATION_FAILED', $className, $constructionParams], E_WARNING, $ex);
 			}
