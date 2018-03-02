@@ -15,7 +15,7 @@ class DIContainer {
 	}
 
 	/**
-	 * Dependency-injection container
+	 * Dependency injection container
 	 * @var DI $di
 	 */
 	public $di;
@@ -28,7 +28,7 @@ class DIContainer {
 		try {
 			return $this->di->get($param);
 		} catch (Exception $ex) {
-			Debug::logException(new CoreException(['DI_CONTAINER_GET_DEPENDENCY_ERROR', static::class], $ex->getCode(), $ex));
+			Debug::logException(new CoreException(['DI_CONTAINER_GET_DEPENDENCY_ERROR', static::class, $param], $ex->getCode(), $ex));
 			return null;
 		}
 	}
@@ -42,7 +42,7 @@ class DIContainer {
 			$value = $this->di->get($param);
 			return $value ? true : false;
 		} catch (Exception $ex) {
-			Debug::logException(new CoreException(['DI_CONTAINER_GET_DEPENDENCY_ERROR', static::class], $ex->getCode(), $ex));
+			Debug::logException(new CoreException(['DI_CONTAINER_GET_DEPENDENCY_ERROR', static::class, $param], $ex->getCode(), $ex));
 			return false;
 		}
 	}

@@ -78,7 +78,7 @@ class DI {
 			$constructionParams = $overrideParams ?? $constructionParams;
 			try {
 				if ($constructionParams) {
-					return call_user_func_array([$className, '__construct'], $constructionParams);
+					return new $className(...$constructionParams);
 				} else {
 					return new $className();
 				}

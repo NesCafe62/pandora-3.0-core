@@ -12,10 +12,16 @@ class Debug {
 	private static $logger;
 
 	/**
+	 * @var string $rootPath
+	 */
+	private static $rootPath;
+
+	/**
 	 * @param ILogger|null $logger
 	 */
 	public static function init($logger = null): void {
 		self::$logger = $logger ?? new Logger();
+		self::$rootPath = dirname(trimRight(unixPath(__DIR__), '/pandora3/core/Debug'));
 	}
 
 	/**
@@ -50,11 +56,17 @@ class Debug {
 		return $codes[$code] ?? 'Error';
 	}
 
+	private static function relativePath($filename) {
+		return trimLeft($filename, self::$rootPath);
+	}
+
 	/**
 	 * @param Throwable $ex
 	 */
 	public static function logException(Throwable $ex): void {
 		$subMessages = [];
+
+		echo '<b>'.self::getErrorLabel($ex->getCode()).'</b>: <pre style="display: inline;">'.str_replace('  ', '    ', $ex->getMessage()).'</pre> in <b>'.self::relativePath($ex->getFile()).'</b> on line <b>'.$ex->getLine().'</b><br>';
 
 		$e = $ex->getPrevious();
 		while ($e != null) {
@@ -63,13 +75,14 @@ class Debug {
 				'level' => $e->getCode(),
 				'message' => $e->getMessage(),
 				'params' => ($e instanceof CoreException) ? $e->getParams() : [],
-				'file' => $e->getFile(),
+				'file' => self::relativePath($e->getFile()),
 				'line' => $e->getLine()
 			];
+
+			echo '<pre style="display: inline;">    </pre><b>'.self::getErrorLabel($e->getCode()).'</b>: <pre style="display: inline;">'.str_replace('  ', '    ', $e->getMessage()).'</pre> in <b>'.self::relativePath($e->getFile()).'</b> on line <b>'.$e->getLine().'</b><br>';
+
 			$e = $e->getPrevious();
 		}
-
-		echo '<b>'.self::getErrorLabel($ex->getCode()).'</b>: <pre style="display: inline;">'.str_replace('  ', '    ', $ex->getMessage()).'</pre> in <b>'.$ex->getFile().'</b> on line <b>'.$ex->getLine().'</b><br>';
 
 		self::$logger->log([
 			'type' => 'exception',
@@ -78,9 +91,24 @@ class Debug {
 			'message' => $ex->getMessage(),
 			'params' => ($ex instanceof CoreException) ? $ex->getParams() : [],
 			'subMessages' => $subMessages,
-			'file' => $ex->getFile(),
+			'file' => self::relativePath($ex->getFile()),
 			'line' => $ex->getLine()
 		]);
+	}
+
+	public static function dumpTrace($level = 1): void {
+		$trace = debug_backtrace();
+		$rows = '';
+		foreach ($trace as $i => $item) {
+			if ($i >= $level) {
+				$method = $item['class'].'::'.$item['function'];
+				$file = self::relativePath($item['file']);
+				$line = $item['line'];
+				$rows .= '<pre style="display: inline;">    '.$method.'</pre> in <b>'.$file.'</b> on line <b>'.$line.'</b><br>';
+			}
+		}
+
+		echo '<b>Trace</b>: <br>'.$rows;
 	}
 
 	/**
@@ -107,7 +135,7 @@ class Debug {
 	public static function log($value, string $label = ''): void {
 		$message = self::dumpValue($value);
 
-		echo '<b>Console</b>: '.$label.' '.$message.'<br>';
+		echo '<b>Console</b>: '.$label.' <pre style="display: inline;">'.str_replace('  ', '    ', $message).'</pre><br>';
 
 		self::$logger->log([
 			'type' => 'log',

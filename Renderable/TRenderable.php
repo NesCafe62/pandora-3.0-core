@@ -9,7 +9,7 @@ trait TRenderable {
 	/**
 	 * @return string
 	 */
-	public function getViewPath(): string {
+	protected function getViewPath(): string {
 		return $this->path.'/views';
 	}
 
