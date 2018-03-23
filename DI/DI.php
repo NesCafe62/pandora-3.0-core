@@ -2,8 +2,8 @@
 namespace pandora3\core\DI;
 
 use pandora3\core\DI\Exceptions\{DIException, DIKeyNotFoundException};
-use \Closure;
-use \Throwable;
+use Closure;
+use Throwable;
 
 class DI {
 
@@ -31,23 +31,26 @@ class DI {
 
 	/**
 	 * @param string $key
-	 * @param array|Closure $constructionParams
+	 * @param string|array|Closure $constructionParams
 	 */
 	public function set(string $key, $constructionParams): void {
 		try {
 			$this->_setDependency($key, $constructionParams);
 		} catch (DIException $ex) { }
 	}
-	
+
 	/**
 	 * @param string $key
-	 * @param array|Closure $constructionParams
+	 * @param string|array|Closure $constructionParams
 	 * @throws DIException
 	 */
 	private function _setDependency(string $key, $constructionParams): void {
 		if (array_key_exists($key, $this->dependencies)) {
 			// 'dependency already set'
 			throw new DIException(['DI_DEPENDENCY_KEY_ALREADY_SET', $key]);
+		}
+		if (is_string($constructionParams)) {
+			$constructionParams = [$constructionParams];
 		}
 		$this->dependencies[$key] = $constructionParams;
 	}
@@ -57,6 +60,21 @@ class DI {
 	 */
 	public function setDependencies(array $dependencies): void {
 		foreach ($dependencies as $key => $constructionParams) {
+			try {
+				$this->_setDependency($key, $constructionParams);
+			} catch (DIException $ex) { }
+		}
+	}
+
+	/**
+	 * @param array $dependencies
+	 * @param DI $parent
+	 */
+	public function extend(array $dependencies, DI $parent): void {
+		foreach ($dependencies as $key => $constructionParams) {
+			if (array_key_exists($key, $parent->dependencies)) {
+				$constructionParams = $parent->dependencies[$key];
+			}
 			try {
 				$this->_setDependency($key, $constructionParams);
 			} catch (DIException $ex) { }

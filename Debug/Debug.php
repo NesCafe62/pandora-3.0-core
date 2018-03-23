@@ -2,7 +2,7 @@
 namespace pandora3\core\Debug;
 
 use pandora3\core\Logger\{Logger, ILogger};
-use \Throwable;
+use Throwable;
 
 class Debug {
 
@@ -20,6 +20,9 @@ class Debug {
 	 * @param ILogger|null $logger
 	 */
 	public static function init($logger = null): void {
+		error_reporting(E_ALL);
+		ini_set('display_errors','1');
+
 		self::$logger = $logger ?? new Logger();
 		self::$rootPath = dirname(trimRight(unixPath(__DIR__), '/pandora3/core/Debug'));
 	}

@@ -1,8 +1,8 @@
 <?php
 namespace pandora3\core\Debug;
 
-use \Exception;
-use \Throwable;
+use Exception;
+use Throwable;
 
 class CoreException extends Exception {
 

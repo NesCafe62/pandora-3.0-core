@@ -1,7 +1,7 @@
 <?php
 namespace pandora3\core\DI;
 
-use \Exception;
+use Exception;
 use pandora3\core\Debug\CoreException;
 use pandora3\core\Debug\Debug;
 

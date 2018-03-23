@@ -2,8 +2,9 @@
 namespace pandora3\core\App;
 
 use pandora3\core\Debug\{Debug, CoreException};
-use \Exception;
-use \Throwable;
+use pandora3\core\Logger\Logger;
+use Exception;
+use Throwable;
 
 /**
  * @property \pandora3\core\Http\IRequest $request
@@ -14,7 +15,6 @@ use \Throwable;
  * @property array $routes
  * @property string $uri
  */
-
 abstract class HttpApp extends BaseApp {
 
 	/**
@@ -40,11 +40,12 @@ abstract class HttpApp extends BaseApp {
 
 	protected function init(): void {
 		$this->di->setDependencies([
-			'response' => ['pandora3\libs\Http\Response'],
-			'request' => ['pandora3\libs\Http\Request'],
+			'response' => 'pandora3\libs\Http\Response',
+			'request' => 'pandora3\libs\Http\Request',
 			'router' => function() {
 				return new \pandora3\libs\Router\Router($this->routes);
-			}
+			},
+			'templateRenderer' => 'pandora3\plugins\Twig\TwigPlugin'
 		]);
 
 		if (!empty($this->config['db'])) {
@@ -71,9 +72,14 @@ abstract class HttpApp extends BaseApp {
 		$this->router->dispatch($this->uri, $this->request, $this->response);
 	}
 
-	public function run(): void {
+	/**
+	 * @param string $mode
+	 */
+	public function run(string $mode = 'dev'): void {
 		try {
-			$this->initParams();
+			require(dirname(__DIR__).'/functions.php');
+			Debug::init(new Logger());
+			$this->initParams($mode);
 			$this->init();
 			$this->handle();
 			$this->response->send();

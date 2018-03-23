@@ -2,7 +2,7 @@
 namespace pandora3\core\Dynamic;
 
 use pandora3\core\Debug\CoreException;
-use \Throwable;
+use Throwable;
 
 trait TDynamicProps {
 
