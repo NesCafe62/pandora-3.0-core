@@ -7,7 +7,7 @@ Lightweight PHP framework
 If you throw away all unused abstractions you will have high-performance. However, we can't refuse all abstraction. But if a balance is maintained this could be achieved.  
 Also having less redundant stuff helps to save time in reading the code, when you only see things that are used.
 
-### 2. Accumulate repository set of quality components for common needs
+### 2. Accumulate a repository of quality components for common needs
 With growth of community we could make them better and more of them.  
 They will be free and available to anyone.
 
