@@ -13,7 +13,7 @@ They will be free and available to anyone.
 
 ### 3. Architecture to always keep potention for customisations
 Ready stuff can really save time for development.  
-But it is bad when you can't use ready solution, because of it doesn't suit all required needs.
+But it's always bad when you can't use ready solution, because of it doesn't suit all required needs.
 
 So, what if any customisation should not be hindered?  
 The idea is not to make huge and universal components with many of options for all occasions.  
