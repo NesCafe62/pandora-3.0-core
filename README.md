@@ -17,6 +17,6 @@ But it's always bad when you can't use ready solution, because of it doesn't sui
 
 So, what if any opportunity of customisation should not be hindered?  
 The idea is not to make huge and universal components with many of options for all occasions.  
-But make simple things that can be used in major cases. And then build on top of them to suit particular requirements.
+But make simple solutions that can be used in major cases. And then build on top of them to suit particular requirements.
 
 ### 4. One step towards a "Tool of tomorrow development"
