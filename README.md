@@ -15,7 +15,7 @@ They will be free and available to anyone.
 Ready stuff can really save time for development.  
 But it's always bad when you can't use ready solution, because of it doesn't suit all required needs.
 
-So, what if any opportunity of customisation should not be hindered?  
+So, what if any opportunity of customisation should be preserved?  
 The idea is not to make huge and universal components with many of options for all occasions.  
 But make simple solutions that can be used in major cases. And then build on top of them to suit particular requirements.
 
