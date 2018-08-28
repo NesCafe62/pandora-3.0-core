@@ -8,7 +8,7 @@ If you throw away all unused abstractions you will have high-performance. Howeve
 Also having less redundant stuff helps to save time in reading the code, when you only see things that are used.
 
 ### 2. Accumulate a repository of reusable, quality and reliable components
-With growth of community we wiil have more componnets amd make them better.
+With growth of community we wiil have more componnets amd make them better.   
 They will be free and available to anyone.
 
 ### 3. Always keep potential for customisations (via architecture)
